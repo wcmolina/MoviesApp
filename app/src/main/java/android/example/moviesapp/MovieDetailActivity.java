@@ -3,8 +3,11 @@ package android.example.moviesapp;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.io.IOException;
 
@@ -18,13 +21,15 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     final String MOVIE_ID = "420817";
     TextView movieOverview;
+    ImageView movieBackdrop;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.movie_detail);
+        setContentView(R.layout.movie_landing);
         movieOverview = findViewById(R.id.tv_movie_overview);
+        movieBackdrop = findViewById(R.id.iv_movie_backdrop);
         getMovieDetails(MOVIE_ID);
     }
 
@@ -54,6 +59,10 @@ public class MovieDetailActivity extends AppCompatActivity {
                 final String movieDetailResponse = response.body().string();
                 MovieDetailActivity.this.runOnUiThread(() -> {
                     movieOverview.setText(movieDetailResponse);
+                    Glide.with(MovieDetailActivity.this)
+                            .load("https://image.tmdb.org/t/p/w500/v4yVTbbl8dE1UP2dWu5CLyaXOku.jpg")
+                            .centerCrop()
+                            .into(movieBackdrop);
                 });
             }
         });
