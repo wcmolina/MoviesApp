@@ -27,7 +27,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.movie_landing);
+        setContentView(R.layout.fragment_landing_info);
         movieOverview = findViewById(R.id.tv_movie_overview);
         movieBackdrop = findViewById(R.id.iv_movie_backdrop);
         getMovieDetails(MOVIE_ID);
@@ -58,7 +58,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 final String movieDetailResponse = response.body().string();
                 MovieDetailActivity.this.runOnUiThread(() -> {
-                    movieOverview.setText(movieDetailResponse);
+                    //movieOverview.setText(movieDetailResponse);
                     Glide.with(MovieDetailActivity.this)
                             .load("https://image.tmdb.org/t/p/w500/v4yVTbbl8dE1UP2dWu5CLyaXOku.jpg")
                             .centerCrop()
