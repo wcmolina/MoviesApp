@@ -1,8 +1,14 @@
 <resources>
     <string name="app_name">Movies App</string>
-    <string name="copy_play_trailer_btn">Play Trailer</string>
+
+    <!-- API -->
     <string name="api_key">d7d3962a3e6fec4a4292088ffc71a8c0</string>
-    <string name="image_base_url">https://image.tmdb.org/t/p/w500/</string>
     <string name="movie_detail_base_url">https://api.themoviedb.org/3/movie</string>
+    <string name="image_base_url">https://image.tmdb.org/t/p/w500/</string>
     <string name="language_query_parameter">language=en-US</string>
+
+    <!-- Copy -->
+    <string name="copy_play_trailer_btn">Play Trailer</string>
+    <string name="copy_runtime_tv">%d min</string>
+    <string name="copy_votes_tv">%.1f/10</string>
 </resources>

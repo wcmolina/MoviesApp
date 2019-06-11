@@ -43,7 +43,6 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut efficitur, orci et malesuada blandit, purus metus tincidunt purus, imperdiet efficitur magna enim faucibus sapien"
             android:textColor="@color/primaryTextColor"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
