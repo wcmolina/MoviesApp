@@ -1,9 +1,11 @@
 package android.example.moviesapp;
 
+import android.content.Intent;
 import android.example.moviesapp.models.Movie;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +40,13 @@ public class MovieLandingActivity extends AppCompatActivity {
         setContentView(R.layout.fragment_landing_info);
         init();
         getMovieDetails(MOVIE_ID);
+        playTrailerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MovieLandingActivity.this, YoutubePlayerActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void getMovieDetails(String movieId) {
