@@ -41,6 +41,14 @@ public class MovieLandingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_landing_info);
         initializeViews();
+
+        // Add Back button to ActionBar
+        try {
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        } catch (NullPointerException npe) {
+            npe.printStackTrace();
+        }
+
         getMovieDetails(MOVIE_ID);
         playTrailerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +57,12 @@ public class MovieLandingActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     public void getMovieDetails(String movieId) {
