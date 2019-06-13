@@ -23,6 +23,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 public class MovieLandingActivity extends AppCompatActivity {
 
     final String MOVIE_ID = "299534";
@@ -38,7 +40,7 @@ public class MovieLandingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_landing_info);
-        init();
+        initializeViews();
         getMovieDetails(MOVIE_ID);
         playTrailerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +96,7 @@ public class MovieLandingActivity extends AppCompatActivity {
                     // Set backdrop image
                     Glide.with(MovieLandingActivity.this)
                             .load("https://image.tmdb.org/t/p/w500" + movie.getBackdrop_path())
+                            .transition(withCrossFade(300))
                             .centerCrop()
                             .into(movieBackdrop);
                 });
@@ -101,7 +104,7 @@ public class MovieLandingActivity extends AppCompatActivity {
         });
     }
 
-    private void init() {
+    private void initializeViews() {
         movieBackdrop = findViewById(R.id.iv_movie_backdrop);
         playTrailerBtn = findViewById(R.id.btn_play_trailer);
         movieOverview = findViewById(R.id.tv_movie_overview);
