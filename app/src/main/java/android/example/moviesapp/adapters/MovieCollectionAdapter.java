@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -41,6 +40,7 @@ public class MovieCollectionAdapter extends RecyclerView.Adapter<MovieCollection
     public void onBindViewHolder(@NonNull MovieCollectionViewHolder collectionViewHolder, int position) {
         Log.d(TAG, "onBindViewHolder");
         MovieCollection collection = collections.get(position);
+        // Todo: make collection title dynamic
         collectionViewHolder.titleTextView.setText("Popular");
         MovieAdapter movieAdapter = new MovieAdapter(context, collection.getResults());
         collectionViewHolder.moviesRecyclerView.setHasFixedSize(true);
@@ -59,7 +59,7 @@ public class MovieCollectionAdapter extends RecyclerView.Adapter<MovieCollection
         TextView titleTextView;
         RecyclerView moviesRecyclerView;
 
-        public MovieCollectionViewHolder(@NonNull View itemView) {
+        MovieCollectionViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.tv_collection_title);
             moviesRecyclerView = itemView.findViewById(R.id.rv_movie_items);
