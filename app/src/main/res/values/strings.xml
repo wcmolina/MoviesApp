@@ -7,7 +7,7 @@
     <string name="image_base_url">https://image.tmdb.org/t/p/w500/</string>
     <string name="language_query_parameter">language=en-US</string>
 
-    <!-- Copy -->
+    <!-- Copies -->
     <string name="copy_play_trailer_btn">Play Trailer</string>
     <string name="copy_runtime_tv">%d min</string>
     <string name="copy_votes_tv">%.1f/10</string>

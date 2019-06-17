@@ -1,6 +1,8 @@
 package android.example.moviesapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.example.moviesapp.MovieLandingActivity;
 import android.example.moviesapp.R;
 import android.example.moviesapp.models.Movie;
 import android.support.annotation.NonNull;
@@ -10,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -49,7 +50,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                 .centerCrop()
                 .into(movieViewHolder.poster);
         movieViewHolder.poster.setOnClickListener(v -> {
-            Toast.makeText(context, movies.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+            Intent intent = MovieLandingActivity.newIntent(context, movies.get(position).getId());
+            context.startActivity(intent);
         });
     }
 

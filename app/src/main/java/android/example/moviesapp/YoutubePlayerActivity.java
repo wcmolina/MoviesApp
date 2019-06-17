@@ -1,5 +1,7 @@
 package android.example.moviesapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +17,8 @@ import java.util.Objects;
 
 public class YoutubePlayerActivity extends AppCompatActivity {
 
+    private static final String EXTRA_TRAILER_ID =
+            "android.example.moviesapp.trailer_id";
     YouTubePlayerView youtubePlayerView;
     YouTubePlayer youtubePlayer;
 
@@ -29,6 +33,12 @@ public class YoutubePlayerActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         youtubePlayerView.release();
+    }
+
+    public static Intent newIntent(Context packageContext, String trailerId) {
+        Intent intent = new Intent(packageContext, YoutubePlayerActivity.class);
+        intent.putExtra(EXTRA_TRAILER_ID, trailerId);
+        return intent;
     }
 
     public void initializePlayer() {
@@ -49,7 +59,7 @@ public class YoutubePlayerActivity extends AppCompatActivity {
                     youtubePlayerView.getPlayerUIController().showFullscreenButton(false);
                     youtubePlayerView.getPlayerUIController().showYouTubeButton(false);
                     youtubePlayerView.enterFullScreen();
-                    youtubePlayer.loadVideo("hA6hldpSTF8", 0);
+                    youtubePlayer.loadVideo(getIntent().getStringExtra(EXTRA_TRAILER_ID), 0);
                     youtubePlayer.play();
                 }
 

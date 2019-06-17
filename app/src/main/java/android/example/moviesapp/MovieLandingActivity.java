@@ -1,11 +1,13 @@
 package android.example.moviesapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.example.moviesapp.models.Movie;
+import android.example.moviesapp.models.Video;
+import android.example.moviesapp.models.VideoList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,7 +29,9 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 public class MovieLandingActivity extends AppCompatActivity {
 
-    final String MOVIE_ID = "299534";
+    private static final String EXTRA_MOVIE_ID =
+            "android.example.moviesapp.movie_id";
+    String movieId;
     ImageView movieBackdrop;
     Button playTrailerBtn;
     TextView movieOverview;
@@ -35,28 +39,12 @@ public class MovieLandingActivity extends AppCompatActivity {
     TextView date;
     TextView avgVotes;
 
+    // Activity Lifecycle
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.movie_landing);
-        initializeViews();
-
-        // Add Back button to ActionBar
-        try {
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        } catch (NullPointerException npe) {
-            npe.printStackTrace();
-        }
-
-        getMovieDetails(MOVIE_ID);
-        playTrailerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MovieLandingActivity.this, YoutubePlayerActivity.class);
-                startActivity(intent);
-            }
-        });
+    public static Intent newIntent(Context packageContext, String movieId) {
+        Intent intent = new Intent(packageContext, MovieLandingActivity.class);
+        intent.putExtra(EXTRA_MOVIE_ID, movieId);
+        return intent;
     }
 
     @Override
@@ -65,7 +53,61 @@ public class MovieLandingActivity extends AppCompatActivity {
         return true;
     }
 
-    public void getMovieDetails(String movieId) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.movie_landing);
+        initializeViews();
+
+        // Add Back button to ActionBar and remove default text
+        try {
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("");
+        } catch (NullPointerException npe) {
+            npe.printStackTrace();
+        }
+
+        movieId = getIntent().getStringExtra(EXTRA_MOVIE_ID);
+        updateMovieData(movieId);
+
+        playTrailerBtn.setOnClickListener(v -> {
+            String baseUrl = getResources().getString(R.string.movie_detail_base_url);
+
+            Uri buildUri = Uri.parse(baseUrl).buildUpon()
+                    .appendPath(movieId)
+                    .appendPath("videos")
+                    .appendQueryParameter("language", "en-US")
+                    .appendQueryParameter("api_key", getResources().getString(R.string.api_key))
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(buildUri.toString())
+                    .build();
+
+            OkHttpClient httpClient = new OkHttpClient();
+            httpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    call.cancel();
+                    Toast.makeText(MovieLandingActivity.this, "Error fetching videos", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    VideoList videoList = new Gson().fromJson(response.body().string(), VideoList.class);
+                    Video mainTrailer = videoList.getResults().get(0);
+                    if (!mainTrailer.getKey().isEmpty()) {
+                        Intent intent = YoutubePlayerActivity.newIntent(MovieLandingActivity.this, mainTrailer.getKey());
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(MovieLandingActivity.this, "Error playing video", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        });
+    }
+
+    public void updateMovieData(String movieId) {
         String baseUrl = getResources().getString(R.string.movie_detail_base_url);
 
         Uri buildUri = Uri.parse(baseUrl).buildUpon()

@@ -2,6 +2,7 @@ package android.example.moviesapp.models
 
 data class Movie
 (
+        val id: String,
         val title: String,
         val vote_average: Double,
         val runtime: Int,
