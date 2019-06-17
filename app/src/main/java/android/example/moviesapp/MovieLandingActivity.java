@@ -39,7 +39,7 @@ public class MovieLandingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_landing_info);
+        setContentView(R.layout.movie_landing);
         initializeViews();
 
         // Add Back button to ActionBar

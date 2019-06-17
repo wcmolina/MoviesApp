@@ -21,7 +21,7 @@ public class YoutubePlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_youtube_player);
+        setContentView(R.layout.youtube_player);
         initializePlayer();
     }
 

@@ -9,6 +9,4 @@ data class Movie
         val overview: String,
         val backdrop_path: String,
         val poster_path: String
-) {
-
-}
+)
