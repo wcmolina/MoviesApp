@@ -24,6 +24,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private RecyclerView collectionRecyclerView;
     private ArrayList<MovieCollection> movies = new ArrayList<>();
+    private MovieCollectionAdapter collectionAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,8 @@ public class HomeActivity extends AppCompatActivity {
         collectionRecyclerView.setHasFixedSize(true);
 
         collectionRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        collectionAdapter = new MovieCollectionAdapter(this, movies);
+        collectionRecyclerView.setAdapter(collectionAdapter);
     }
 
     public void initPopular() {
@@ -66,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
                 movies.add(new Gson().fromJson(popularResponse, MovieCollection.class));
                 movies.add(new Gson().fromJson(popularResponse, MovieCollection.class));
                 movies.add(new Gson().fromJson(popularResponse, MovieCollection.class));
-                HomeActivity.this.runOnUiThread(() -> collectionRecyclerView.setAdapter(new MovieCollectionAdapter(HomeActivity.this, movies)));
+                HomeActivity.this.runOnUiThread(() -> collectionAdapter.notifyDataSetChanged());
             }
         });
     }
