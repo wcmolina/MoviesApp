@@ -68,96 +68,74 @@ public class MovieLandingActivity extends AppCompatActivity {
         }
 
         movieId = getIntent().getStringExtra(EXTRA_MOVIE_ID);
-        updateMovieData(movieId);
-
+        updateViewsFromMovie(movieId);
         playTrailerBtn.setOnClickListener(v -> {
             String baseUrl = getResources().getString(R.string.movie_detail_base_url);
+            new OkHttpClient()
+                    .newCall(buildRequest(baseUrl, movieId, "videos"))
+                    .enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            call.cancel();
+                            Toast.makeText(MovieLandingActivity.this, "Error fetching videos", Toast.LENGTH_SHORT).show();
+                        }
 
-            Uri buildUri = Uri.parse(baseUrl).buildUpon()
-                    .appendPath(movieId)
-                    .appendPath("videos")
-                    .appendQueryParameter("language", "en-US")
-                    .appendQueryParameter("api_key", getResources().getString(R.string.api_key))
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url(buildUri.toString())
-                    .build();
-
-            OkHttpClient httpClient = new OkHttpClient();
-            httpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    call.cancel();
-                    Toast.makeText(MovieLandingActivity.this, "Error fetching videos", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    VideoList videoList = new Gson().fromJson(response.body().string(), VideoList.class);
-                    Video mainTrailer = videoList.getResults().get(0);
-                    if (!mainTrailer.getKey().isEmpty()) {
-                        Intent intent = YoutubePlayerActivity.newIntent(MovieLandingActivity.this, mainTrailer.getKey());
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(MovieLandingActivity.this, "Error playing video", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            VideoList videoList = new Gson().fromJson(response.body().string(), VideoList.class);
+                            Video mainTrailer = videoList.getResults().get(0);
+                            if (!mainTrailer.getKey().isEmpty()) {
+                                Intent intent = YoutubePlayerActivity.newIntent(MovieLandingActivity.this, mainTrailer.getKey());
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(MovieLandingActivity.this, "Error playing video", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
         });
     }
 
-    public void updateMovieData(String movieId) {
+    public void updateViewsFromMovie(String movieId) {
         String baseUrl = getResources().getString(R.string.movie_detail_base_url);
-
-        Uri buildUri = Uri.parse(baseUrl).buildUpon()
-                .appendPath(movieId)
-                .appendQueryParameter("language", "en-US")
-                .appendQueryParameter("api_key", getResources().getString(R.string.api_key))
-                .build();
-
-        Request request = new Request.Builder()
-                .url(buildUri.toString())
-                .build();
-
-        OkHttpClient httpClient = new OkHttpClient();
-        httpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                call.cancel();
-                Toast.makeText(MovieLandingActivity.this, "Request failed", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String movieDetailResponse = response.body().string();
-                MovieLandingActivity.this.runOnUiThread(() -> {
-                    // Init movie instance
-                    Movie movie = new Gson().fromJson(movieDetailResponse, Movie.class);
-
-                    // Update ActionBar text with movie title
-                    try {
-                        Objects.requireNonNull(getSupportActionBar()).setTitle(movie.getTitle());
-                    } catch (NullPointerException npe) {
-                        npe.printStackTrace();
+        new OkHttpClient()
+                .newCall(buildRequest(baseUrl, movieId))
+                .enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        call.cancel();
+                        Toast.makeText(MovieLandingActivity.this, "Request failed", Toast.LENGTH_SHORT).show();
                     }
 
-                    // Update views with values from movie instance
-                    // Todo: validations
-                    movieOverview.setText(movie.getOverview());
-                    runtime.setText(getString(R.string.copy_runtime_tv, movie.getRuntime()));
-                    date.setText(movie.getRelease_date().split("-")[0]);
-                    avgVotes.setText(getString(R.string.copy_votes_tv, movie.getVote_average()));
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        final String movieDetailResponse = response.body().string();
+                        MovieLandingActivity.this.runOnUiThread(() -> {
+                            // Init movie instance
+                            Movie movie = new Gson().fromJson(movieDetailResponse, Movie.class);
 
-                    // Set backdrop image
-                    Glide.with(MovieLandingActivity.this)
-                            .load("https://image.tmdb.org/t/p/w500" + movie.getBackdrop_path())
-                            .transition(withCrossFade(300))
-                            .centerCrop()
-                            .into(movieBackdrop);
+                            // Update ActionBar text with movie title
+                            try {
+                                Objects.requireNonNull(getSupportActionBar()).setTitle(movie.getTitle());
+                            } catch (NullPointerException npe) {
+                                npe.printStackTrace();
+                            }
+
+                            // Update views with values from movie instance
+                            // Todo: validations
+                            movieOverview.setText(movie.getOverview());
+                            runtime.setText(getString(R.string.copy_runtime_tv, movie.getRuntime()));
+                            date.setText(movie.getRelease_date().split("-")[0]);
+                            avgVotes.setText(getString(R.string.copy_votes_tv, movie.getVote_average()));
+
+                            // Set backdrop image
+                            Glide.with(MovieLandingActivity.this)
+                                    .load("https://image.tmdb.org/t/p/w500" + movie.getBackdrop_path())
+                                    .transition(withCrossFade(300))
+                                    .centerCrop()
+                                    .into(movieBackdrop);
+                        });
+                    }
                 });
-            }
-        });
     }
 
     private void initializeViews() {
@@ -167,5 +145,17 @@ public class MovieLandingActivity extends AppCompatActivity {
         runtime = findViewById(R.id.tv_runtime);
         date = findViewById(R.id.tv_date);
         avgVotes = findViewById(R.id.tv_votes);
+    }
+
+    public Request buildRequest(String baseUrl, String... paths) {
+        Uri buildUri = Uri.parse(baseUrl);
+        for (String path : paths) {
+            buildUri = buildUri.buildUpon().appendPath(path).build();
+        }
+        buildUri = buildUri.buildUpon()
+                .appendQueryParameter("language", "en-US")
+                .appendQueryParameter("api_key", getResources().getString(R.string.api_key))
+                .build();
+        return new Request.Builder().url(buildUri.toString()).build();
     }
 }
