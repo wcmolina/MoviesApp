@@ -2,11 +2,14 @@ package android.example.moviesapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.example.moviesapp.adapters.PagerAdapter;
 import android.example.moviesapp.models.Movie;
 import android.example.moviesapp.models.Video;
 import android.example.moviesapp.models.VideoList;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -38,6 +41,7 @@ public class MovieLandingActivity extends AppCompatActivity {
     TextView runtime;
     TextView date;
     TextView avgVotes;
+    PagerAdapter pagerAdapter;
 
     // Activity Lifecycle
 
@@ -69,6 +73,7 @@ public class MovieLandingActivity extends AppCompatActivity {
 
         movieId = getIntent().getStringExtra(EXTRA_MOVIE_ID);
         updateViewsFromMovie(movieId);
+        setupViewPager();
         playTrailerBtn.setOnClickListener(v -> {
             String baseUrl = getResources().getString(R.string.movie_detail_base_url);
             new OkHttpClient()
@@ -145,6 +150,16 @@ public class MovieLandingActivity extends AppCompatActivity {
         runtime = findViewById(R.id.tv_runtime);
         date = findViewById(R.id.tv_date);
         avgVotes = findViewById(R.id.tv_votes);
+    }
+
+    private void setupViewPager() {
+        ViewPager viewPager = findViewById(R.id.pager);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+        pagerAdapter.addFragment(MovieCreditsFragment.newInstance(0, "Credits", movieId));
+        pagerAdapter.addFragment(MovieReviewsFragment.newInstance(1, "Reviews", movieId));
+        viewPager.setAdapter(pagerAdapter);
+        TabLayout tabLayout = findViewById(R.id.landing_tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     public Request buildRequest(String baseUrl, String... paths) {

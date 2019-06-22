@@ -11,4 +11,6 @@
     <string name="copy_play_trailer_btn">Play Trailer</string>
     <string name="copy_runtime_tv">%d min</string>
     <string name="copy_votes_tv">%.1f/10</string>
+    <!-- Todo: figure out why this character copy placeholder doesn't work -->
+    <string name="character_copy">as %1$s</string>
 </resources>
