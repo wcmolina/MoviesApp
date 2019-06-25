@@ -41,7 +41,7 @@ public class MovieCollectionAdapter extends RecyclerView.Adapter<MovieCollection
         Log.d(TAG, "onBindViewHolder");
         MovieCollection collection = collections.get(position);
         // Todo: make collection title dynamic
-        collectionViewHolder.titleTextView.setText("Popular");
+        collectionViewHolder.titleTextView.setText(collections.get(position).getTitle());
         MovieAdapter movieAdapter = new MovieAdapter(context, collection.getResults());
         collectionViewHolder.moviesRecyclerView.setHasFixedSize(true);
         collectionViewHolder.moviesRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));

@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class MovieReviewsFragment extends Fragment {
 
@@ -36,8 +35,6 @@ public class MovieReviewsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_movie_reviews, container, false);
-        TextView label = view.findViewById(R.id.tv_reviews);
-        label.setText("Reviews!");
         return view;
     }
 }

@@ -9,6 +9,7 @@
         android:id="@+id/tv_reviews"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reviews" />
+        android:text="🚧 Under construction 🚧"
+        android:textColor="@color/primaryTextColor" />
 
 </LinearLayout>

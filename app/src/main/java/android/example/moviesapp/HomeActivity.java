@@ -30,7 +30,15 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        initializeCollections();
+
+        String[] endpoints = {
+                getResources().getString(R.string.now_playing_endpoint),
+                getResources().getString(R.string.popular_endpoint),
+                getResources().getString(R.string.top_rated_endpoint),
+                getResources().getString(R.string.upcoming_endpoint)
+        };
+
+        fetchCollections(endpoints);
         collectionRecyclerView = findViewById(R.id.rv_movie_collection);
 
         // Use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
@@ -39,31 +47,6 @@ public class HomeActivity extends AppCompatActivity {
         collectionRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         collectionAdapter = new MovieCollectionAdapter(this, movies);
         collectionRecyclerView.setAdapter(collectionAdapter);
-    }
-
-    // Todo: right now it is only getting the Popular row. Missing Latest, Now Playing, Top Rated, Upcoming
-    public void initializeCollections() {
-        String baseUrl = "https://api.themoviedb.org/3/movie/popular";
-        new OkHttpClient()
-                .newCall(buildRequest(baseUrl))
-                .enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        call.cancel();
-                        Toast.makeText(HomeActivity.this, "Popular request failed", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        final String popularResponse = response.body().string();
-                        movies.add(new Gson().fromJson(popularResponse, MovieCollection.class));
-                        movies.add(new Gson().fromJson(popularResponse, MovieCollection.class));
-                        movies.add(new Gson().fromJson(popularResponse, MovieCollection.class));
-                        movies.add(new Gson().fromJson(popularResponse, MovieCollection.class));
-                        movies.add(new Gson().fromJson(popularResponse, MovieCollection.class));
-                        HomeActivity.this.runOnUiThread(() -> collectionAdapter.notifyDataSetChanged());
-                    }
-                });
     }
 
     public Request buildRequest(String baseUrl, String... paths) {
@@ -76,5 +59,42 @@ public class HomeActivity extends AppCompatActivity {
                 .appendQueryParameter("api_key", getResources().getString(R.string.api_key))
                 .build();
         return new Request.Builder().url(buildUri.toString()).build();
+    }
+
+    public void fetchCollections(String[] endpoints) {
+        for (String endpoint : endpoints) {
+            new OkHttpClient()
+                    .newCall(buildRequest(endpoint))
+                    .enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            call.cancel();
+                            Toast.makeText(HomeActivity.this, "Collection request failed", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            if (response.isSuccessful()) {
+                                final String collectionResponse = response.body().string();
+                                MovieCollection collection = new Gson().fromJson(collectionResponse, MovieCollection.class);
+
+                                String collectionTitle = "";
+                                if (endpoint.endsWith("/now_playing")) {
+                                    collectionTitle = "Now Playing";
+                                } else if (endpoint.endsWith("/popular")) {
+                                    collectionTitle = "Popular";
+                                } else if (endpoint.endsWith("/top_rated")) {
+                                    collectionTitle = "Top Rated";
+                                } else if (endpoint.endsWith("/upcoming")) {
+                                    collectionTitle = "Upcoming";
+                                }
+
+                                collection.setTitle(collectionTitle);
+                                movies.add(collection);
+                                HomeActivity.this.runOnUiThread(() -> collectionAdapter.notifyDataSetChanged());
+                            }
+                        }
+                    });
+        }
     }
 }

@@ -6,6 +6,10 @@
     <string name="movie_detail_base_url">https://api.themoviedb.org/3/movie</string>
     <string name="image_base_url">https://image.tmdb.org/t/p/w500/</string>
     <string name="language_query_parameter">language=en-US</string>
+    <string name="now_playing_endpoint">https://api.themoviedb.org/3/movie/now_playing</string>
+    <string name="popular_endpoint">https://api.themoviedb.org/3/movie/popular</string>
+    <string name="top_rated_endpoint">https://api.themoviedb.org/3/movie/top_rated</string>
+    <string name="upcoming_endpoint">https://api.themoviedb.org/3/movie/upcoming</string>
 
     <!-- Copies -->
     <string name="copy_play_trailer_btn">Play Trailer</string>
