@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary">
 
-    <!-- This LinearLayout represents the contents of the screen  -->
-    <android.support.constraint.ConstraintLayout
+    <!-- This RelativeLayout represents the contents of the screen  -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -15,30 +15,22 @@
         <include
             layout="@layout/toolbar"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- The main content view where collections are loaded -->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_movie_collection"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_below="@id/toolbar" />
 
         <ProgressBar
             android:id="@+id/pb_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- The main content view where fragments are loaded -->
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_movie_collection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
-
-    </android.support.constraint.ConstraintLayout>
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <!-- The navigation drawer that comes from the left -->
     <!-- Note that `android:layout_gravity` needs to be set to 'start' -->
