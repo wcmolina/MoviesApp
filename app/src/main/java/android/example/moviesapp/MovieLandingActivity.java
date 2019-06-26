@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class MovieLandingActivity extends AppCompatActivity {
     TextView date;
     TextView avgVotes;
     PagerAdapter pagerAdapter;
+    Toolbar toolbar;
 
     // Activity Lifecycle
 
@@ -62,6 +64,7 @@ public class MovieLandingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_landing);
         initializeViews();
+        setSupportActionBar(toolbar);
 
         // Add Back button to ActionBar and remove default text
         try {
@@ -108,7 +111,7 @@ public class MovieLandingActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         call.cancel();
-                        Toast.makeText(MovieLandingActivity.this, "Request failed", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(() -> Toast.makeText(MovieLandingActivity.this, "Request failed", Toast.LENGTH_SHORT).show());
                     }
 
                     @Override
@@ -116,6 +119,7 @@ public class MovieLandingActivity extends AppCompatActivity {
                         final String movieDetailResponse = response.body().string();
                         MovieLandingActivity.this.runOnUiThread(() -> {
                             // Init movie instance
+                            // Todo: try catch in case the response is invalid
                             Movie movie = new Gson().fromJson(movieDetailResponse, Movie.class);
 
                             // Update ActionBar text with movie title
@@ -130,7 +134,9 @@ public class MovieLandingActivity extends AppCompatActivity {
                             movieOverview.setText(movie.getOverview());
                             runtime.setText(getString(R.string.copy_runtime_tv, movie.getRuntime()));
                             date.setText(movie.getRelease_date().split("-")[0]);
-                            avgVotes.setText(getString(R.string.copy_votes_tv, movie.getVote_average()));
+                            avgVotes.setText(movie.getVote_average() == 0
+                                    ? getString(R.string.not_available)
+                                    : getString(R.string.copy_votes_tv, movie.getVote_average()));
 
                             // Set backdrop image
                             Glide.with(MovieLandingActivity.this)
@@ -150,12 +156,13 @@ public class MovieLandingActivity extends AppCompatActivity {
         runtime = findViewById(R.id.tv_runtime);
         date = findViewById(R.id.tv_date);
         avgVotes = findViewById(R.id.tv_votes);
+        toolbar = findViewById(R.id.toolbar);
     }
 
     private void setupViewPager() {
         ViewPager viewPager = findViewById(R.id.pager);
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
-        pagerAdapter.addFragment(MovieCreditsFragment.newInstance(0, "Credits", movieId));
+        pagerAdapter.addFragment(MovieCreditsFragment.newInstance(0, "Cast", movieId));
         pagerAdapter.addFragment(MovieReviewsFragment.newInstance(1, "Reviews", movieId));
         viewPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = findViewById(R.id.landing_tab_layout);

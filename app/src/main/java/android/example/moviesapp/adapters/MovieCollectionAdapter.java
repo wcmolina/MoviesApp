@@ -38,10 +38,9 @@ public class MovieCollectionAdapter extends RecyclerView.Adapter<MovieCollection
     // Populate data into the item through the view holder
     @Override
     public void onBindViewHolder(@NonNull MovieCollectionViewHolder collectionViewHolder, int position) {
-        Log.d(TAG, "onBindViewHolder");
+        Log.d(TAG, "onBindViewHolder, position " + position);
         MovieCollection collection = collections.get(position);
-        // Todo: make collection title dynamic
-        collectionViewHolder.titleTextView.setText(collections.get(position).getTitle());
+        collectionViewHolder.titleTextView.setText(collection.getTitle());
         MovieAdapter movieAdapter = new MovieAdapter(context, collection.getResults());
         collectionViewHolder.moviesRecyclerView.setHasFixedSize(true);
         collectionViewHolder.moviesRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     tools:context=".MovieCreditsFragment">
 
@@ -11,6 +11,6 @@
         android:id="@+id/rv_movie_credits"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"></android.support.v7.widget.RecyclerView>
+        android:orientation="vertical" />
 
 </LinearLayout>

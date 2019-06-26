@@ -17,4 +17,7 @@
     <string name="copy_votes_tv">%.1f/10</string>
     <!-- Todo: figure out why this character copy placeholder doesn't work -->
     <string name="character_copy">as %1$s</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="not_available">N/A</string>
 </resources>

@@ -7,7 +7,7 @@
     <ImageView
         android:id="@+id/iv_movie_poster"
         android:layout_width="108dp"
-        android:layout_height="192dp"
+        android:layout_height="162dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="10dp"
         android:scaleType="fitCenter"
