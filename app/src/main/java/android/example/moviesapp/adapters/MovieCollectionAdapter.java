@@ -6,7 +6,6 @@ import android.example.moviesapp.models.MovieCollection;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,6 @@ import android.widget.TextView;
 import java.util.List;
 
 public class MovieCollectionAdapter extends RecyclerView.Adapter<MovieCollectionAdapter.MovieCollectionViewHolder> {
-
-    private static final String TAG = MovieCollectionAdapter.class.getSimpleName();
 
     private List<MovieCollection> collections;
     private Context context;
@@ -30,7 +27,6 @@ public class MovieCollectionAdapter extends RecyclerView.Adapter<MovieCollection
     @NonNull
     @Override
     public MovieCollectionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder");
         View movieCollectionView = LayoutInflater.from(context).inflate(R.layout.movie_collection_row, parent, false);
         return new MovieCollectionViewHolder(movieCollectionView);
     }
@@ -38,10 +34,9 @@ public class MovieCollectionAdapter extends RecyclerView.Adapter<MovieCollection
     // Populate data into the item through the view holder
     @Override
     public void onBindViewHolder(@NonNull MovieCollectionViewHolder collectionViewHolder, int position) {
-        Log.d(TAG, "onBindViewHolder, position " + position);
         MovieCollection collection = collections.get(position);
         collectionViewHolder.titleTextView.setText(collection.getTitle());
-        MovieAdapter movieAdapter = new MovieAdapter(context, collection.getResults());
+        MovieAdapter movieAdapter = new MovieAdapter(context, collection);
         collectionViewHolder.moviesRecyclerView.setHasFixedSize(true);
         collectionViewHolder.moviesRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         collectionViewHolder.moviesRecyclerView.setAdapter(movieAdapter);
@@ -49,7 +44,6 @@ public class MovieCollectionAdapter extends RecyclerView.Adapter<MovieCollection
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount");
         return collections.size();
     }
 
