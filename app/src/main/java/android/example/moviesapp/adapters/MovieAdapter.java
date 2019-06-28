@@ -30,10 +30,18 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final int TYPE_MOVIE = 0;
     private final int TYPE_LOADER = 1;
     private MovieCollection collection;
+    private RecyclerView recyclerView;
+    private boolean isLoading = false;
 
     MovieAdapter(Context context, MovieCollection collection) {
         this.context = context;
         this.collection = collection;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = recyclerView;
     }
 
     // This method usually involves inflating a layout from XML and returning the view holder
@@ -51,7 +59,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Bind data from data source (Movie) to views contained in the movie view holder (MovieViewHolder)
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        if (position >= getItemCount() - 1) {
+        if (position >= getItemCount() - 1 && !isLoading) {
+            isLoading = true;
             collection.setPage(collection.getPage() + 1);
 
             // Prepare next page request
@@ -64,7 +73,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             // Fetch movies from the specified page to the current collection
             ((HomeActivity) context).fetchIntoCollection(this, request, collection.getPosition());
         }
-        if (getItemType(position) == TYPE_MOVIE) {
+        if (getItemViewType(position) == TYPE_MOVIE) {
             // Set backdrop image
             Glide.with(context)
                     .load("https://image.tmdb.org/t/p/w500" + getMovies().get(position).getPoster_path())
@@ -80,19 +89,33 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
-    public int getItemCount() {
-        return getMovies().size();
-    }
-
-    private List<Movie> getMovies() {
-        return collection.getResults();
-    }
-
-    private int getItemType(int position) {
+    public int getItemViewType(int position) {
         if (getMovies().get(position).getType().equals("movie"))
             return TYPE_MOVIE;
         else
             return TYPE_LOADER;
+    }
+
+    @Override
+    public int getItemCount() {
+        return getMovies().size();
+    }
+
+    public List<Movie> getMovies() {
+        return collection.getResults();
+    }
+
+    public void removeItem(int position) {
+        getMovies().remove(position);
+    }
+
+    public void notifyDataChanged() {
+        notifyDataSetChanged();
+        isLoading = false;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder {
@@ -106,7 +129,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     class LoadViewHolder extends RecyclerView.ViewHolder {
-        public LoadViewHolder(@NonNull View itemView) {
+        LoadViewHolder(@NonNull View itemView) {
             super(itemView);
         }
     }

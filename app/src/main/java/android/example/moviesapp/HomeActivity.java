@@ -23,7 +23,6 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -134,12 +133,8 @@ public class HomeActivity extends AppCompatActivity {
         collectionRecyclerView = findViewById(R.id.rv_movie_collection);
     }
 
-    public void addToCollection(int position, Movie... movies) {
-        this.collections.get(position).getResults().addAll(Arrays.asList(movies));
-    }
-
     public void fetchIntoCollection(MovieAdapter adapter, Request request, int position) {
-        new LoadIntoCollection(position, adapter).execute(request);
+        adapter.getRecyclerView().post(() -> new LoadIntoCollection(position, adapter).execute(request));
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -198,9 +193,9 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<MovieCollection> collections) {
+        protected void onPostExecute(ArrayList<MovieCollection> collectionList) {
             progressBar.setVisibility(View.GONE);
-            collections.addAll(collections);
+            collections.addAll(collectionList);
             collectionAdapter.notifyDataSetChanged();
         }
     }
@@ -220,6 +215,14 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         @Override
+        protected void onPreExecute() {
+            Movie movie = new Movie();
+            movie.setType("loader");
+            adapter.getMovies().add(movie);
+            adapter.notifyItemInserted(adapter.getItemCount() - 1);
+        }
+
+        @Override
         protected MovieCollection doInBackground(Request... requests) {
             MovieCollection collection = fetchCollection(requests[0]);
             if (collection != null && !collection.getResults().isEmpty())
@@ -230,8 +233,9 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(MovieCollection collection) {
+            adapter.removeItem(adapter.getItemCount() - 1);
             collections.get(position).getResults().addAll(collection.getResults());
-            adapter.notifyDataSetChanged();
+            adapter.notifyDataChanged();
         }
     }
 }
